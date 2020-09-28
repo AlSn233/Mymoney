@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">货币转化</string>
+    <string name="text1">人民币</string>
+    <string name="bt1">美元</string>
+    <string name="bt2">欧元</string>
+    <string name="bt3">韩币</string>
+    <string name="bt4">清空</string>
+    <string name="t2">结果</string>
+    <string name="dollar2">dollar</string>
+    <string name="bound2">bound</string>
+    <string name="won2">won</string>
+</resources>

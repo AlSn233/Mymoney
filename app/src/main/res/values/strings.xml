@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Mymoney</string>
+    <string name="text1">RMB</string>
+    <string name="bt1">DOLLARS</string>
+    <string name="bt2">EURO</string>
+    <string name="bt3">KOREAN WON</string>
+    <string name="bt4">DELETE</string>
+    <string name="t2">result</string>
+    <string name="bt_open">config</string>
+    <string name="bt_save">save</string>
+    <string name="dollar2"></string>
+    <string name="bound2"></string>
+    <string name="won2"></string>
+
+</resources>
