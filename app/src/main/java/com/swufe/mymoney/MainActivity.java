@@ -6,15 +6,29 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Runnable{
     private static final String TAG = "MainActivity";
     EditText t1;
     TextView t2;
@@ -31,6 +45,28 @@ public class MainActivity extends AppCompatActivity {
 
         t1 = findViewById(R.id.text1);
         t2 = findViewById(R.id.text2);
+
+        //开启子线程
+        Thread t = new Thread(this);
+        t.start();
+
+        Handler handler;
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.what == 5) {
+                    String str = (String) msg.obj;
+                    Log.i(TAG, "handleMessage: getMessage msg = " + str);
+                    //show.setText(str);
+                }
+                super.handleMessage(msg);
+            }
+        };
+//获取Msg对象，用于返回主线程
+        Message msg = handler.obtainMessage(5);
+//msg.what = 5;
+        msg.obj = "Hello from run()";
+        handler.sendMessage(msg);
 
     }
 
@@ -73,11 +109,11 @@ public class MainActivity extends AppCompatActivity {
     public void open(View v) {
         Intent second = new Intent(this, Main2Activity.class);
         second.putExtra("dollar_rate_key", dollar_rate);
-        second.putExtra("bound_rate_key", euro_rate);
+        second.putExtra("euro_rate_key", euro_rate);
         second.putExtra("won_rate_key", won_rate);
 
         Log.i(TAG, "open: dollarRate=" + dollar_rate);
-        Log.i(TAG, "open: boundRate=" + euro_rate);
+        Log.i(TAG, "open: euroRate=" + euro_rate);
         Log.i(TAG, "open: wonRate=" + won_rate);
         startActivityForResult(second, 1);
     }
@@ -104,6 +140,64 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "onActivityResult: won_rate2=" + won_rate);
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+    @Override
+    public void run() {
+        Log.i(TAG, "run:run()......");
+        //获取网络数据
+        URL url = null;
+        try {
+            url = new URL("https://www.usd-cny.com/bankofchina.htm");
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            InputStream in = http.getInputStream();
+            String html = inputStream2String(in);
+            Log.i(TAG, "run: html=" + html);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        getwebrate();
+
+    }
+
+    private String inputStream2String(InputStream inputStream) throws IOException {
+        final int bufferSize = 1024;
+        final char[] buffer = new char[bufferSize];
+        final StringBuilder out = new StringBuilder();
+        Reader in = new InputStreamReader(inputStream, "gb2312");
+        while (true) {
+            int rsz = in.read(buffer, 0, buffer.length);
+            if (rsz < 0)
+                break;
+            out.append(buffer, 0, rsz);
+        }
+        return out.toString();
+    }
+
+    public void getwebrate(){
+        String url = "http://www.usd-cny.com/bankofchina.htm";
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(url).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.i(TAG, "run: " + doc.title());
+        Elements tables = doc.getElementsByTag("table");
+        Element table6 = tables.get(0);
+//获取TD中的数据
+        Elements tds = table6.getElementsByTag("td");
+        for (int i = 0; i < tds.size(); i += 6) {
+            Element td1 = tds.get(i);
+            Element td2 = tds.get(i + 5);
+            String str1 = td1.text();
+            String val = td2.text();
+            Log.i(TAG, "run: " + str1 + "==>" + val);
+            double v = 100f / Double.parseDouble(val);
+            //获取数据并返回……
+
+        }
     }
 
 }

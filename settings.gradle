@@ -1,2 +1,3 @@
+include ':JavaPro'
 include ':app'
 rootProject.name = "Mymoney"

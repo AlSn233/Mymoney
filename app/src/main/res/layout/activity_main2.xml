@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="@string/bound2" />
+        android:text="@string/euro2" />
 
     <EditText
         android:id="@+id/text5"

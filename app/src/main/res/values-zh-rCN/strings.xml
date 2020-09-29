@@ -8,6 +8,8 @@
     <string name="bt4">清空</string>
     <string name="t2">结果</string>
     <string name="dollar2">dollar</string>
-    <string name="bound2">bound</string>
+    <string name="euro2">euro</string>
     <string name="won2">won</string>
+    <string name="bt_open">配置</string>
+    <string name="bt_save">保存</string>
 </resources>
