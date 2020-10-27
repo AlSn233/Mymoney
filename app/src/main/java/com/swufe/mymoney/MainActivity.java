@@ -3,6 +3,9 @@ package com.swufe.mymoney;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -45,6 +48,25 @@ public class MainActivity extends AppCompatActivity implements Runnable{
 
         t1 = findViewById(R.id.text1);
         t2 = findViewById(R.id.text2);
+
+        AlarmManager aManager=(AlarmManager)getSystemService(Service.ALARM_SERVICE);
+        Intent intent=new Intent();
+        // 启动一个名为DialogActivity的Activity
+        intent.setClass(this, getRate.class);
+        // 获取PendingIntent对象
+        // requestCode 参数用来区分不同的PendingIntent对象
+        // flag 参数常用的有4个值：
+        //  FLAG_CANCEL_CURRENT 当需要获取的PendingIntent对象已经存在时，先取消当前的对象，再获取新的；
+        // 	FLAG_ONE_SHOT 获取的PendingIntent对象只能使用一次，再次使用需要重新获取
+        // 	FLAG_NO_CREATE 如果获取的PendingIntent对象不存在，则返回null
+        //	FLAG_UPDATE_CURRENT 如果希望获取的PendingIntent对象与已经存在的PendingIntent对象相比，如果只是Intent附加的数据不同，那么当前存在的PendingIntent对象不会被取消，而是重新加载新的Intent附加的数据
+
+        // 设置定时任务，这里使用绝对时间，即使休眠也提醒，程序启动后过一天会启动新的Activity，在这里配置一年的任务
+        int cou = 0;
+        for (cou=0; cou<365;cou++){
+            PendingIntent pi=PendingIntent.getActivity(this, cou, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            aManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+10000*cou, pi);
+        }
 
         //开启子线程
         Thread t = new Thread(this);
